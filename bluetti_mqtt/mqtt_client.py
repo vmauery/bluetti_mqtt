@@ -5,7 +5,7 @@ import json
 import logging
 import re
 from typing import List, Optional
-from aiomqtt import Client, MqttError
+from aiomqtt import Client, MqttError, Will
 from paho.mqtt.client import MQTTMessage
 from bluetti_mqtt.bus import CommandMessage, EventBus, ParserMessage
 from bluetti_mqtt.core import BluettiDevice, DeviceCommand
@@ -604,15 +604,22 @@ class MQTTClient:
     async def run(self):
         while True:
             logging.info('Connecting to MQTT broker...')
+            will = Will(topic="device/status",
+                        payload="unavailable",
+                        qos=1,
+                        retain=True)
             try:
                 async with Client(
 #                    mqtt.CallbackAPIVersion.VERSION1,
                     hostname=self.hostname,
                     port=self.port,
                     username=self.username,
-                    password=self.password
+                    password=self.password,
+                    will=will
                 ) as client:
                     logging.info('Connected to MQTT broker')
+                    await client.publish("device/status", "available",
+                                         retain=True)
 
                     # Connect to event bus
                     self.message_queue = asyncio.Queue()
