@@ -1,6 +1,12 @@
 # Change Log
 
-## FUTURE
+## 0.17.0
+
+* Add Last Will and Testament LWT for when devices go offline
+
+## 0.16.0
+
+* unknown changes
 
 ## 0.15.0
 
